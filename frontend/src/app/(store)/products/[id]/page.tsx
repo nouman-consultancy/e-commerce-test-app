@@ -5,6 +5,7 @@ import type { Product } from '@/types';
 import { formatPrice } from '@/lib/utils';
 import AddToCartButton from '@/components/store/AddToCartButton';
 import ProductSuggestions from '@/components/store/ProductSuggestions';
+import ProductImage from '@/components/ui/ProductImage';
 
 export default async function ProductDetailPage({
   params,
@@ -38,15 +39,8 @@ export default async function ProductDetailPage({
       </nav>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
-        <div className="aspect-square rounded-2xl overflow-hidden bg-gray-100">
-          <img
-            src={
-              product.imageUrl ||
-              `https://placehold.co/600x600/e2e8f0/64748b?text=${encodeURIComponent(product.name)}`
-            }
-            alt={product.name}
-            className="w-full h-full object-cover"
-          />
+        <div className="aspect-square rounded-2xl overflow-hidden">
+          <ProductImage src={product.imageUrl} name={product.name} initialsSize="4rem" />
         </div>
 
         <div className="flex flex-col gap-5">

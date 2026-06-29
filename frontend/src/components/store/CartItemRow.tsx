@@ -11,6 +11,7 @@ import api from '@/lib/api';
 import useCartStore from '@/store/cartStore';
 import type { CartItem } from '@/types';
 import { formatPrice } from '@/lib/utils';
+import ProductImage from '@/components/ui/ProductImage';
 
 export default function CartItemRow({ item }: { item: CartItem }) {
   const setCart = useCartStore((s) => s.setCart);
@@ -42,14 +43,13 @@ export default function CartItemRow({ item }: { item: CartItem }) {
       sx={{ p: 2, mb: 2, display: 'flex', gap: 2, alignItems: 'center', borderRadius: 2 }}
     >
       <Link href={`/products/${item.productId}`} style={{ flexShrink: 0 }}>
-        <img
-          src={
-            item.product?.imageUrl ||
-            `https://placehold.co/80x80/e2e8f0/64748b?text=${encodeURIComponent(item.product?.name || '')}`
-          }
-          alt={item.product?.name || ''}
-          style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 8, display: 'block' }}
-        />
+        <Box sx={{ width: 80, height: 80, borderRadius: 1, overflow: 'hidden' }}>
+          <ProductImage
+            src={item.product?.imageUrl}
+            name={item.product?.name || ''}
+            initialsSize="1.5rem"
+          />
+        </Box>
       </Link>
 
       <Box sx={{ flex: 1, minWidth: 0 }}>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -16,6 +16,7 @@ import {
 import toast from 'react-hot-toast';
 import api from '@/lib/api';
 import type { Product } from '@/types';
+import ProductImage from '@/components/ui/ProductImage';
 
 const schema = yup.object({
   name: yup.string().required('Name is required'),
@@ -45,7 +46,6 @@ export default function ProductForm({ product }: Props) {
   const router = useRouter();
   const isEdit = !!product;
   const [submitting, setSubmitting] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState(product?.imageUrl ?? '');
 
   const {
     register,
@@ -67,9 +67,7 @@ export default function ProductForm({ product }: Props) {
   });
 
   const watchedImageUrl = watch('imageUrl');
-  useEffect(() => {
-    if (watchedImageUrl) setPreviewUrl(watchedImageUrl);
-  }, [watchedImageUrl]);
+  const watchedName = watch('name');
 
   const onSubmit = async (data: FormValues) => {
     setSubmitting(true);
@@ -171,7 +169,7 @@ export default function ProductForm({ product }: Props) {
         </Box>
       </Paper>
 
-      {previewUrl && (
+      {watchedImageUrl && (
         <Paper
           variant="outlined"
           sx={{ p: 2, borderRadius: 2, width: { xs: '100%', md: 260 }, flexShrink: 0 }}
@@ -179,12 +177,13 @@ export default function ProductForm({ product }: Props) {
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
             Image Preview
           </Typography>
-          <img
-            src={previewUrl}
-            alt="Product preview"
-            style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 8 }}
-            onError={() => setPreviewUrl('')}
-          />
+          <Box sx={{ width: '100%', height: 200, borderRadius: 1, overflow: 'hidden' }}>
+            <ProductImage
+              src={watchedImageUrl}
+              name={watchedName || 'Preview'}
+              initialsSize="2.5rem"
+            />
+          </Box>
         </Paper>
       )}
     </Box>

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardActions, Typography, Chip, Button, Box } from '@mui/material';
 import { Product } from '@/types';
 import { formatPrice } from '@/lib/utils';
+import ProductImage from '@/components/ui/ProductImage';
 
 export default function ProductCard({ product }: { product: Product }) {
   const isOutOfStock = product.stock === 0;
@@ -28,25 +29,14 @@ export default function ProductCard({ product }: { product: Product }) {
         sx={{
           position: 'relative',
           overflow: 'hidden',
-          bgcolor: '#f1f5f9',
           aspectRatio: '4/3',
         }}
       >
-        <Box
-          component="img"
-          className="product-image"
-          src={
-            product.imageUrl ||
-            `https://placehold.co/400x300/e2e8f0/94a3b8?text=${encodeURIComponent(product.name)}`
-          }
-          alt={product.name}
-          sx={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            display: 'block',
-            transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1)',
-          }}
+        <ProductImage
+          src={product.imageUrl}
+          name={product.name}
+          imgClassName="product-image"
+          imgSx={{ transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1)' }}
         />
 
         {/* Category chip overlay */}
@@ -139,10 +129,7 @@ export default function ProductCard({ product }: { product: Product }) {
           size="small"
           fullWidth
           disabled={isOutOfStock}
-          sx={{
-            py: 0.9,
-            fontSize: '0.82rem',
-          }}
+          sx={{ py: 0.9, fontSize: '0.82rem' }}
         >
           {isOutOfStock ? 'Out of Stock' : 'View Product'}
         </Button>

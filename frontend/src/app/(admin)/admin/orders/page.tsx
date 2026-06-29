@@ -187,7 +187,7 @@ export default function AdminOrdersPage() {
   ];
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Container maxWidth="xl" sx={{ py: 4, px: 3 }}>
       <Typography variant="h5" sx={{ fontWeight: 700, mb: 3 }}>
         Orders
       </Typography>

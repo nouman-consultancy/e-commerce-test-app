@@ -72,7 +72,7 @@ export default function AdminDashboardPage() {
   }));
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Container maxWidth="xl" sx={{ py: 4, px: 3 }}>
       <Typography variant="h5" sx={{ fontWeight: 700, mb: 4 }}>
         Dashboard
       </Typography>

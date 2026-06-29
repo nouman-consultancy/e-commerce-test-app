@@ -18,7 +18,7 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 
-export const DRAWER_WIDTH = 240;
+export const DRAWER_WIDTH = 220;
 
 const navItems = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: DashboardIcon },

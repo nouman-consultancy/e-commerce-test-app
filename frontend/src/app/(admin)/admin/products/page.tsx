@@ -82,7 +82,7 @@ export default function AdminProductsPage() {
   ];
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Container maxWidth="xl" sx={{ py: 4, px: 3 }}>
       <Box
         sx={{
           display: 'flex',

@@ -1,16 +1,22 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Not, MoreThan } from 'typeorm';
 import { Product } from './entities/product.entity';
+import { ProductView } from './entities/product-view.entity';
 import { ProductQueryDto } from './dto/product-query.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { OrderItem } from '../orders/entities/order-item.entity';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+    @InjectRepository(ProductView)
+    private readonly productViewRepository: Repository<ProductView>,
+    @InjectRepository(OrderItem)
+    private readonly orderItemRepository: Repository<OrderItem>,
   ) {}
 
   async findAll(query: ProductQueryDto) {
@@ -97,5 +103,52 @@ export class ProductsService {
     const product = await this.findOneAdmin(id);
     product.isActive = false;
     await this.productRepository.save(product);
+  }
+
+  async getSuggestions(
+    productId: string,
+    userId?: string,
+  ): Promise<{ data: Product[]; personalised: boolean }> {
+    const current = await this.findOne(productId);
+
+    let targetCategory = current.category;
+    let personalised = false;
+
+    if (userId) {
+      const top = await this.orderItemRepository
+        .createQueryBuilder('item')
+        .innerJoin('item.order', 'ord', 'ord.userId = :userId', { userId })
+        .innerJoin('item.product', 'prod')
+        .select('prod.category', 'category')
+        .addSelect('SUM(item.quantity)', 'qty')
+        .where('item.productId IS NOT NULL')
+        .groupBy('prod.category')
+        .orderBy('SUM(item.quantity)', 'DESC')
+        .limit(1)
+        .getRawOne<{ category: string; qty: string }>();
+
+      if (top) {
+        targetCategory = top.category;
+        personalised = true;
+      }
+    }
+
+    const suggestions = await this.productRepository.find({
+      where: {
+        id: Not(productId),
+        category: targetCategory,
+        isActive: true,
+        stock: MoreThan(0),
+      },
+      order: { createdAt: 'DESC' },
+      take: 4,
+    });
+
+    return { data: suggestions, personalised };
+  }
+
+  async recordView(productId: string, userId: string): Promise<void> {
+    const view = this.productViewRepository.create({ productId, userId });
+    await this.productViewRepository.save(view);
   }
 }

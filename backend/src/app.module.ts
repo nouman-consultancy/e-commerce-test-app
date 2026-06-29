@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { databaseConfig } from './config/database.config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { ProductsModule } from './products/products.module';
 import { User } from './users/entities/user.entity';
 import { Product } from './products/entities/product.entity';
 import { ProductView } from './products/entities/product-view.entity';
@@ -27,6 +28,7 @@ import { OrderItem } from './orders/entities/order-item.entity';
     }),
     UsersModule,
     AuthModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

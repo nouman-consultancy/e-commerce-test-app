@@ -1,6 +1,15 @@
 'use client';
 
-import { Box, Typography } from '@mui/material';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from 'recharts';
 
 const STATUS_COLORS: Record<string, string> = {
   pending: '#9E9E9E',
@@ -15,49 +24,40 @@ interface Props {
 }
 
 export default function DashboardChart({ data }: Props) {
-  const maxCount = Math.max(...data.map((d) => d.count), 1);
-
   return (
-    <Box sx={{ pb: 1 }}>
-      <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 200 }}>
-        {data.map(({ status, count }) => (
-          <Box
-            key={status}
-            sx={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              height: '100%',
-              justifyContent: 'flex-end',
-            }}
-          >
-            <Typography variant="caption" sx={{ mb: 0.5, fontWeight: 700 }}>
-              {count > 0 ? count : ''}
-            </Typography>
-            <Box
-              sx={{
-                width: '100%',
-                height: count > 0 ? `${(count / maxCount) * 160}px` : '4px',
-                bgcolor: count > 0 ? STATUS_COLORS[status] ?? '#888' : 'grey.200',
-                borderRadius: '4px 4px 0 0',
-                transition: 'height 0.4s ease',
-              }}
-            />
-            <Typography
-              variant="caption"
-              sx={{
-                mt: 1,
-                textTransform: 'capitalize',
-                color: 'text.secondary',
-                textAlign: 'center',
-              }}
-            >
-              {status}
-            </Typography>
-          </Box>
-        ))}
-      </Box>
-    </Box>
+    <ResponsiveContainer width="100%" height={220}>
+      <BarChart data={data} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke="rgba(15,23,42,0.06)" vertical={false} />
+        <XAxis
+          dataKey="status"
+          tick={{ fontSize: 12, textTransform: 'capitalize', fill: '#64748b' }}
+          axisLine={false}
+          tickLine={false}
+          tickFormatter={(v: string) => v.charAt(0).toUpperCase() + v.slice(1)}
+        />
+        <YAxis
+          allowDecimals={false}
+          tick={{ fontSize: 12, fill: '#64748b' }}
+          axisLine={false}
+          tickLine={false}
+        />
+        <Tooltip
+          cursor={{ fill: 'rgba(99,102,241,0.06)' }}
+          contentStyle={{
+            borderRadius: 8,
+            border: '1px solid rgba(15,23,42,0.08)',
+            boxShadow: '0 4px 12px rgba(15,23,42,0.1)',
+            fontSize: 13,
+          }}
+          formatter={(value: number) => [value, 'Orders']}
+          labelFormatter={(label: string) => label.charAt(0).toUpperCase() + label.slice(1)}
+        />
+        <Bar dataKey="count" radius={[6, 6, 0, 0]} maxBarSize={56}>
+          {data.map(({ status }) => (
+            <Cell key={status} fill={STATUS_COLORS[status] ?? '#6366f1'} />
+          ))}
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
   );
 }

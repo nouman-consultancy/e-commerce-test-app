@@ -2,6 +2,12 @@
 
 ---
 
+## Agent Session Transcripts
+
+Claude Code session transcripts (`.jsonl` files) are included in the [`transcripts/`](./transcripts/) directory at the root of this repo. Each file is one session; the largest (`e0553194-…jsonl`, ~7 MB) covers the bulk of the build from Feature 5 onwards. Earlier sessions are the smaller files.
+
+---
+
 ## Agent Workflow
 
 I used **Claude Code** (Anthropic's CLI agent) throughout the entire build. The workflow was strictly feature-by-feature:

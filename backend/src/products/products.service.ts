@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { ProductQueryDto } from './dto/product-query.dto';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -68,5 +70,32 @@ export class ProductsService {
       throw new NotFoundException('Product not found');
     }
     return product;
+  }
+
+  async findAllAdmin(): Promise<Product[]> {
+    return this.productRepository.find({ order: { createdAt: 'DESC' } });
+  }
+
+  async findOneAdmin(id: string): Promise<Product> {
+    const product = await this.productRepository.findOne({ where: { id } });
+    if (!product) throw new NotFoundException('Product not found');
+    return product;
+  }
+
+  async create(dto: CreateProductDto): Promise<Product> {
+    const product = this.productRepository.create(dto);
+    return this.productRepository.save(product);
+  }
+
+  async update(id: string, dto: UpdateProductDto): Promise<Product> {
+    const product = await this.findOneAdmin(id);
+    Object.assign(product, dto);
+    return this.productRepository.save(product);
+  }
+
+  async softDelete(id: string): Promise<void> {
+    const product = await this.findOneAdmin(id);
+    product.isActive = false;
+    await this.productRepository.save(product);
   }
 }

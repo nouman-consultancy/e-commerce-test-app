@@ -67,6 +67,7 @@ export interface Order {
   } | null;
   paymentRef: string;
   items: OrderItem[];
+  user?: User;
   createdAt: string;
   updatedAt: string;
 }

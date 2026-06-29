@@ -19,11 +19,13 @@ import {
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import StorefrontIcon from '@mui/icons-material/Storefront';
+import useCartStore from '@/store/cartStore';
 
 export default function Navbar() {
   const { data: session } = useSession();
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const totalItems = useCartStore((s) => s.totalItems);
 
   const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) =>
     setAnchorEl(e.currentTarget);
@@ -43,9 +45,7 @@ export default function Navbar() {
           variant="h6"
           component={Link}
           href="/products"
-          fontWeight={800}
-          letterSpacing={-0.5}
-          sx={{ flexGrow: 1, textDecoration: 'none', color: 'inherit' }}
+          sx={{ flexGrow: 1, textDecoration: 'none', color: 'inherit', fontWeight: 800, letterSpacing: -0.5 }}
         >
           ShopApp
         </Typography>
@@ -67,7 +67,7 @@ export default function Navbar() {
         )}
 
         <IconButton component={Link} href="/cart" color="inherit" size="small">
-          <Badge badgeContent={0} color="secondary">
+          <Badge badgeContent={totalItems} color="secondary">
             <ShoppingCartIcon />
           </Badge>
         </IconButton>
@@ -85,7 +85,7 @@ export default function Navbar() {
               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
               <MenuItem disabled sx={{ opacity: '1 !important' }}>
-                <Typography variant="body2" fontWeight={600}>
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
                   {session.user?.name}
                 </Typography>
               </MenuItem>

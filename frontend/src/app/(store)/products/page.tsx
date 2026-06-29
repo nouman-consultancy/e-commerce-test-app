@@ -39,20 +39,23 @@ export default async function ProductsPage({
   const currentPage = parseInt(sp.page || '1', 10);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Shop</h1>
-        <p className="text-gray-500 mt-1">{products.total} products</p>
+    <div className="max-w-7xl mx-auto px-4 py-10">
+      {/* Page header */}
+      <div className="mb-8">
+        <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Shop</h1>
+        <p className="text-slate-400 mt-1.5 text-sm">
+          {products.total} {products.total === 1 ? 'product' : 'products'} available
+        </p>
       </div>
 
-      <div className="flex gap-8">
-        <aside className="w-64 flex-shrink-0">
+      <div className="flex gap-6">
+        <aside className="w-60 flex-shrink-0">
           <Suspense
             fallback={
-              <div className="bg-white rounded-lg border border-gray-200 p-4 h-64 animate-pulse" />
+              <div className="bg-white rounded-2xl border border-slate-100 p-4 h-64 animate-pulse" />
             }
           >
-            <div className="bg-white rounded-lg border border-gray-200 p-4 sticky top-4">
+            <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 sticky top-4">
               <ProductFilters categories={categories} />
             </div>
           </Suspense>

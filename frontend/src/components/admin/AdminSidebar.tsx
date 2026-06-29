@@ -38,46 +38,133 @@ export default function AdminSidebar() {
         '& .MuiDrawer-paper': {
           width: DRAWER_WIDTH,
           boxSizing: 'border-box',
-          borderRight: '1px solid',
-          borderColor: 'divider',
+          bgcolor: '#0f172a',
+          borderRight: 'none',
+          boxShadow: '4px 0 30px rgba(0,0,0,0.2)',
         },
       }}
     >
-      <Box sx={{ p: 2.5, borderBottom: '1px solid', borderColor: 'divider' }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-          Admin Panel
+      {/* Logo */}
+      <Box
+        sx={{
+          px: 2.5,
+          pt: 2.5,
+          pb: 2,
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.25 }}>
+          <Box
+            sx={{
+              width: 28,
+              height: 28,
+              borderRadius: 1.5,
+              background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 4px 12px rgba(99,102,241,0.5)',
+              flexShrink: 0,
+            }}
+          >
+            <Typography sx={{ color: 'white', fontSize: '0.75rem', fontWeight: 800, lineHeight: 1 }}>
+              S
+            </Typography>
+          </Box>
+          <Typography sx={{ fontWeight: 800, color: 'white', letterSpacing: '-0.03em', fontSize: '1rem' }}>
+            ShopApp
+          </Typography>
+        </Box>
+        <Typography sx={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', ml: 5, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+          Admin
         </Typography>
       </Box>
 
-      <List sx={{ pt: 1, flexGrow: 1 }}>
-        {navItems.map(({ label, href, icon: Icon }) => (
-          <ListItem key={href} disablePadding>
-            <ListItemButton
-              component={Link}
-              href={href}
-              selected={pathname === href || (href !== '/admin/dashboard' && pathname.startsWith(href))}
-            >
-              <ListItemIcon sx={{ minWidth: 36 }}>
-                <Icon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText
-                primary={label}
-                slotProps={{ primary: { variant: 'body2' } }}
-              />
-            </ListItemButton>
-          </ListItem>
-        ))}
+      {/* Nav */}
+      <List sx={{ pt: 2, px: 1.5, flexGrow: 1 }}>
+        {navItems.map(({ label, href, icon: Icon }) => {
+          const isActive =
+            pathname === href ||
+            (href !== '/admin/dashboard' && pathname.startsWith(href));
+          return (
+            <ListItem key={href} disablePadding sx={{ mb: 0.25 }}>
+              <ListItemButton
+                component={Link}
+                href={href}
+                sx={{
+                  borderRadius: 1.5,
+                  py: 1,
+                  px: 1.5,
+                  color: isActive ? '#a5b4fc' : 'rgba(255,255,255,0.5)',
+                  bgcolor: isActive ? 'rgba(99,102,241,0.15)' : 'transparent',
+                  border: isActive ? '1px solid rgba(99,102,241,0.2)' : '1px solid transparent',
+                  '& .MuiListItemIcon-root': {
+                    color: isActive ? '#818cf8' : 'rgba(255,255,255,0.4)',
+                    minWidth: 34,
+                  },
+                  '&:hover': {
+                    bgcolor: isActive ? 'rgba(99,102,241,0.2)' : 'rgba(255,255,255,0.06)',
+                    color: isActive ? '#a5b4fc' : 'rgba(255,255,255,0.8)',
+                    '& .MuiListItemIcon-root': { color: '#a5b4fc' },
+                  },
+                }}
+              >
+                <ListItemIcon>
+                  <Icon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText
+                  primary={label}
+                  slotProps={{
+                    primary: {
+                      sx: {
+                        fontSize: '0.875rem',
+                        fontWeight: isActive ? 600 : 500,
+                        color: 'inherit',
+                      },
+                    },
+                  }}
+                />
+                {isActive && (
+                  <Box
+                    sx={{
+                      width: 4,
+                      height: 4,
+                      borderRadius: '50%',
+                      bgcolor: '#818cf8',
+                      flexShrink: 0,
+                    }}
+                  />
+                )}
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
 
-      <Divider />
-      <Box sx={{ p: 2 }}>
-        <ListItemButton component={Link} href="/products" sx={{ borderRadius: 1 }}>
-          <ListItemIcon sx={{ minWidth: 36 }}>
+      <Divider sx={{ borderColor: 'rgba(255,255,255,0.06)', mx: 1.5 }} />
+      <Box sx={{ p: 1.5 }}>
+        <ListItemButton
+          component={Link}
+          href="/products"
+          sx={{
+            borderRadius: 1.5,
+            py: 1,
+            px: 1.5,
+            color: 'rgba(255,255,255,0.35)',
+            '& .MuiListItemIcon-root': { color: 'rgba(255,255,255,0.3)', minWidth: 34 },
+            '&:hover': {
+              bgcolor: 'rgba(255,255,255,0.06)',
+              color: 'rgba(255,255,255,0.65)',
+              '& .MuiListItemIcon-root': { color: 'rgba(255,255,255,0.5)' },
+            },
+          }}
+        >
+          <ListItemIcon>
             <StorefrontIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText
             primary="Back to Store"
-            slotProps={{ primary: { variant: 'body2', color: 'text.secondary' } }}
+            slotProps={{ primary: { sx: { fontSize: '0.8rem', fontWeight: 500, color: 'inherit' } } }}
           />
         </ListItemButton>
       </Box>

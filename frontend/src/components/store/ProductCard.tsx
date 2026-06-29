@@ -1,62 +1,150 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  Card,
-  CardMedia,
-  CardContent,
-  CardActions,
-  Typography,
-  Chip,
-  Button,
-} from '@mui/material';
+import { Card, CardContent, CardActions, Typography, Chip, Button, Box } from '@mui/material';
 import { Product } from '@/types';
 import { formatPrice } from '@/lib/utils';
 
 export default function ProductCard({ product }: { product: Product }) {
+  const isOutOfStock = product.stock === 0;
+
   return (
     <Card
       sx={{
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        transition: 'transform 0.2s, box-shadow 0.2s',
-        '&:hover': { transform: 'translateY(-2px)', boxShadow: 4 },
+        '&:hover': {
+          transform: 'translateY(-4px)',
+          boxShadow: '0 20px 40px rgba(15,23,42,0.12)',
+        },
+        '&:hover .product-image': {
+          transform: 'scale(1.06)',
+        },
       }}
     >
-      <CardMedia
-        component="img"
-        height="200"
-        image={
-          product.imageUrl ||
-          `https://placehold.co/400x300/e2e8f0/64748b?text=${encodeURIComponent(product.name)}`
-        }
-        alt={product.name}
-        sx={{ objectFit: 'cover' }}
-      />
-      <CardContent sx={{ flex: 1, pb: 1 }}>
-        <Chip label={product.category} size="small" sx={{ mb: 1 }} />
-        <Typography variant="subtitle1" component="h3" sx={{ fontWeight: 600 }} noWrap gutterBottom>
+      {/* Image area */}
+      <Box
+        sx={{
+          position: 'relative',
+          overflow: 'hidden',
+          bgcolor: '#f1f5f9',
+          aspectRatio: '4/3',
+        }}
+      >
+        <Box
+          component="img"
+          className="product-image"
+          src={
+            product.imageUrl ||
+            `https://placehold.co/400x300/e2e8f0/94a3b8?text=${encodeURIComponent(product.name)}`
+          }
+          alt={product.name}
+          sx={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: 'block',
+            transition: 'transform 0.4s cubic-bezier(0.4,0,0.2,1)',
+          }}
+        />
+
+        {/* Category chip overlay */}
+        <Box sx={{ position: 'absolute', top: 10, left: 10 }}>
+          <Chip
+            label={product.category}
+            size="small"
+            sx={{
+              bgcolor: 'rgba(255,255,255,0.92)',
+              backdropFilter: 'blur(8px)',
+              fontWeight: 600,
+              fontSize: '0.68rem',
+              color: 'text.primary',
+              height: 22,
+              border: '1px solid rgba(255,255,255,0.8)',
+            }}
+          />
+        </Box>
+
+        {/* Out-of-stock overlay */}
+        {isOutOfStock && (
+          <Box
+            sx={{
+              position: 'absolute',
+              inset: 0,
+              bgcolor: 'rgba(15,23,42,0.55)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Typography
+              sx={{
+                color: 'white',
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                bgcolor: 'rgba(15,23,42,0.6)',
+                px: 1.5,
+                py: 0.5,
+                borderRadius: 1,
+                border: '1px solid rgba(255,255,255,0.2)',
+              }}
+            >
+              Sold Out
+            </Typography>
+          </Box>
+        )}
+      </Box>
+
+      {/* Content */}
+      <CardContent sx={{ flex: 1, p: 2.5, pb: 1.5 }}>
+        <Typography
+          component="h3"
+          sx={{
+            fontWeight: 600,
+            fontSize: '0.925rem',
+            lineHeight: 1.35,
+            mb: 0.75,
+            color: 'text.primary',
+            overflow: 'hidden',
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+          }}
+        >
           {product.name}
         </Typography>
-        <Typography variant="h6" sx={{ color: 'primary.main', fontWeight: 700 }}>
+        <Typography
+          sx={{
+            fontWeight: 800,
+            fontSize: '1.15rem',
+            letterSpacing: '-0.03em',
+            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: isOutOfStock ? undefined : 'transparent',
+            color: isOutOfStock ? 'text.disabled' : undefined,
+          }}
+        >
           {formatPrice(product.price)}
         </Typography>
-        {product.stock === 0 && (
-          <Typography variant="caption" sx={{ color: 'error.main' }}>
-            Out of stock
-          </Typography>
-        )}
       </CardContent>
-      <CardActions sx={{ pt: 0 }}>
+
+      <CardActions sx={{ p: 2.5, pt: 0.5 }}>
         <Button
           component={Link}
           href={`/products/${product.id}`}
-          variant="outlined"
+          variant="contained"
           size="small"
           fullWidth
+          disabled={isOutOfStock}
+          sx={{
+            py: 0.9,
+            fontSize: '0.82rem',
+          }}
         >
-          View Product
+          {isOutOfStock ? 'Out of Stock' : 'View Product'}
         </Button>
       </CardActions>
     </Card>

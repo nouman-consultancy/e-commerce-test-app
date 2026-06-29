@@ -38,7 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         component="main"
         sx={{
           flexGrow: 1,
-          bgcolor: 'grey.50',
+          bgcolor: 'background.default',
           minHeight: '100vh',
         }}
       >

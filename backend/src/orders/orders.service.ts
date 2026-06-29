@@ -94,6 +94,14 @@ export class OrdersService {
     return order;
   }
 
+  async findAll(userId: string): Promise<{ data: Order[]; total: number }> {
+    const [data, total] = await this.orderRepository.findAndCount({
+      where: { userId },
+      order: { createdAt: 'DESC' },
+    });
+    return { data, total };
+  }
+
   async findOne(userId: string, id: string): Promise<Order> {
     const order = await this.orderRepository.findOne({ where: { id } });
     if (!order) throw new NotFoundException('Order not found');

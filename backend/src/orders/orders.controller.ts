@@ -18,6 +18,11 @@ export class OrdersController {
     return this.ordersService.createOrder(user.id, dto);
   }
 
+  @Get()
+  findAll(@CurrentUser() user: User) {
+    return this.ordersService.findAll(user.id);
+  }
+
   @Get(':id')
   findOne(@CurrentUser() user: User, @Param('id') id: string) {
     return this.ordersService.findOne(user.id, id);

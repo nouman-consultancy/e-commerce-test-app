@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import {
   Box,
@@ -38,6 +38,16 @@ export default function ProductFilters({ categories }: { categories: string[] })
     params.delete('page');
     router.push(`/products?${params.toString()}`);
   };
+
+  useEffect(() => {
+    const current = searchParams.get('search') || '';
+    if (searchInput === current) return;
+    const timer = setTimeout(() => {
+      updateFilters({ search: searchInput || undefined });
+    }, 400);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchInput]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();

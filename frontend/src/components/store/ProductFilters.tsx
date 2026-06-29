@@ -28,6 +28,8 @@ export default function ProductFilters({ categories }: { categories: string[] })
   const currentSort = `${sortBy}-${sortOrder}`;
 
   const [searchInput, setSearchInput] = useState(searchParams.get('search') || '');
+  const [minPrice, setMinPrice] = useState(searchParams.get('minPrice') || '');
+  const [maxPrice, setMaxPrice] = useState(searchParams.get('maxPrice') || '');
 
   const updateFilters = (updates: Record<string, string | undefined>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -48,6 +50,17 @@ export default function ProductFilters({ categories }: { categories: string[] })
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchInput]);
+
+  useEffect(() => {
+    const currentMin = searchParams.get('minPrice') || '';
+    const currentMax = searchParams.get('maxPrice') || '';
+    if (minPrice === currentMin && maxPrice === currentMax) return;
+    const timer = setTimeout(() => {
+      updateFilters({ minPrice: minPrice || undefined, maxPrice: maxPrice || undefined });
+    }, 400);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [minPrice, maxPrice]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -151,6 +164,49 @@ export default function ProductFilters({ categories }: { categories: string[] })
               }
             />
           ))}
+        </Box>
+      </Box>
+
+      {/* Price range */}
+      <Box>
+        <Typography
+          variant="caption"
+          sx={{
+            fontWeight: 700,
+            color: 'text.secondary',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            display: 'block',
+            mb: 1.5,
+          }}
+        >
+          Price range
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <TextField
+            size="small"
+            placeholder="Min"
+            type="number"
+            value={minPrice}
+            onChange={(e) => { if (Number(e.target.value) >= 0) setMinPrice(e.target.value); }}
+            slotProps={{
+              htmlInput: { min: 0, step: 1, onKeyDown: (e: React.KeyboardEvent) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); } },
+              input: { startAdornment: <InputAdornment position="start">£</InputAdornment> },
+            }}
+            sx={{ width: '50%' }}
+          />
+          <TextField
+            size="small"
+            placeholder="Max"
+            type="number"
+            value={maxPrice}
+            onChange={(e) => { if (Number(e.target.value) >= 0) setMaxPrice(e.target.value); }}
+            slotProps={{
+              htmlInput: { min: 0, step: 1, onKeyDown: (e: React.KeyboardEvent) => { if (e.key === '-' || e.key === 'e') e.preventDefault(); } },
+              input: { startAdornment: <InputAdornment position="start">£</InputAdornment> },
+            }}
+            sx={{ width: '50%' }}
+          />
         </Box>
       </Box>
 

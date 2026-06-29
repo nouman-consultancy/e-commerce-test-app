@@ -73,9 +73,11 @@ export default function AdminProductsPage() {
           >
             Edit
           </Button>
-          <Button size="small" color="error" onClick={() => setDeleteId(params.row.id as string)}>
-            Delete
-          </Button>
+          {params.row.isActive && (
+            <Button size="small" color="error" onClick={() => setDeleteId(params.row.id as string)}>
+              Delete
+            </Button>
+          )}
         </Box>
       ),
     },

@@ -36,19 +36,21 @@ I used **Claude Code** (Anthropic's CLI agent) throughout the entire build. The 
 
 ### 1. Admin layout — double `ml` offset (significant visual bug)
 
-**The bug**: In the admin layout, the main content `Box` had `ml: '240px'` applied manually. But a MUI `Drawer` with `variant="permanent"` IS a flex item — it's in the document flow and naturally pushes siblings to the right. Adding `ml: DRAWER_WIDTH` on top of that caused the content area to start at `2 × 240 = 480px` from the left, leaving a large gap.
+**The bug**: In the admin layout, the main content `Box` had `ml: '220px'` applied manually (`DRAWER_WIDTH = 220`). But a MUI `Drawer` with `variant="permanent"` IS a flex item — it's in the document flow and naturally pushes siblings to the right. Adding `ml: DRAWER_WIDTH` on top of that caused the content area to start at `2 × 220 = 440px` from the left, leaving a large gap.
 
 **How I caught it**: Visible in the browser — the content was pushed far to the right of the sidebar.
 
 **Fix**: Removed the `ml` from the main Box. The permanent Drawer's natural flex placement is sufficient.
 
-### 2. recharts assumed but not installed
+### 2. recharts assumed but not installed (later resolved)
 
 **The bug**: The plan stated "use recharts `BarChart`" for the admin dashboard. The agent wrote code importing from `recharts`. Only when I checked the actual `package.json` did I confirm recharts was not installed.
 
 **How I caught it**: TypeScript compilation error + checking `frontend/package.json` explicitly.
 
-**Fix**: Replaced recharts with a pure CSS/MUI Box bar chart proportional to `(count / maxCount) * 160px`. No install needed.
+**Initial fix**: Replaced recharts with a pure CSS/MUI Box bar chart proportional to `(count / maxCount) * 160px` as a zero-install workaround.
+
+**Final state**: recharts (`^3.9.0`) was subsequently installed and the dashboard chart was upgraded to a proper `<BarChart>` with `<XAxis>`, `<YAxis>`, `<CartesianGrid>`, and `<Tooltip>` via `DashboardChart.tsx`. The CSS bar chart no longer exists in the codebase.
 
 ### 3. Unused imports after refactoring
 
@@ -90,12 +92,14 @@ MUI v9 moved several shorthand CSS props to require the `sx` prop. The agent occ
 
 ## Design Workflow
 
+**Agent used**: Claude Code — Anthropic's CLI agent, powered by **Claude Sonnet 4.6** (`claude-sonnet-4-6`).
+
 I directed the UI design through Claude Code prompts rather than a dedicated design tool, describing the layout and component hierarchy I wanted. Decisions included:
 
 - **Store layout**: Tailwind for server-component layouts (grid, flex, spacing), MUI component islands (Cards, Chips, Buttons) for interactive elements. Kept MUI out of server components to avoid RSC/client boundary issues.
 - **Admin layout**: permanent MUI Drawer sidebar (220px), grey.50 background on the main area, MUI DataGrid for data-heavy tables.
-- **Colour palette**: muted, professional — `grey.50` backgrounds, `#1976d2` primary blue, status colours matched across the StatusBadge component and the dashboard chart (grey/blue/amber/green/red for pending/processing/shipped/delivered/cancelled).
-- **Admin dashboard chart**: CSS-based bar chart since recharts wasn't installed. Bars are proportional to max count, with a 4px stub for zero values so empty statuses are visible.
+- **Colour palette**: muted, professional — `#f8fafc` (slate-50) backgrounds, `#6366f1` indigo primary (dark: `#4f46e5`, light: `#818cf8`), status colours matched across the StatusBadge component and the dashboard chart (grey/blue/amber/green/red for pending/processing/shipped/delivered/cancelled). Note: `#1976d2` appears only as the MUI-default "processing" bar colour in `DashboardChart.tsx`, not as the theme primary.
+- **Admin dashboard chart**: recharts `BarChart` (`DashboardChart.tsx`) with `XAxis`, `YAxis`, `CartesianGrid`, and `Tooltip`. Initially built as a CSS-based fallback before recharts was installed; subsequently upgraded.
 - **Checkout**: two-column layout (address left, mock payment right), with React Hook Form + Yup validation for both forms.
 
 I iterated on a few components — the ProductCard hover state, the admin sidebar active-route highlighting, and the checkout success page layout — through follow-up prompts.
